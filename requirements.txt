@@ -7,3 +7,5 @@ pydantic
 openai
 instructor
 urllib3
+pandas
+
