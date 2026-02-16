@@ -13,10 +13,18 @@ from scrapers import supreme_court, delhi_high_court, bombay_high_court
 app = FastAPI()
 
 # ================== CORS ==================
+# FIXED FOR VERCEL + LOCAL DEV
+
+origins = [
+    "https://casepulse-frontend.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -166,8 +174,6 @@ async def search_cases(request: SearchRequest):
         except Exception as e:
             print("Bombay High Court failed:", e)
 
-    # ✅ NCLAT SINGLE DATE (range with same day)
-
     if request.court == "nclat":
         try:
             print("🔥 NCLAT single-date search running")
@@ -243,8 +249,6 @@ async def search_cases_range(request: SearchRangeRequest):
             results.extend(bombay_results)
         except Exception as e:
             print("Bombay High Court range failed:", e)
-
-    # ✅ NCLAT RANGE
 
     if request.court == "nclat":
         try:
@@ -325,6 +329,7 @@ def delhi_monitor(req: MonitorRequest):
         return []
 
     return results
+
 
 @app.post("/api/cerc/search")
 def cerc_search(req: CercRequest):
